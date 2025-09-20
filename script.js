@@ -1,4 +1,4 @@
-async function drawFromJson(jsonFile, nombre = "Kevin") { // nombre por defecto
+async function drawFromJson(jsonFile, nombre = "PARA: VANELLY") { 
   const response = await fetch(jsonFile);
   const regions = await response.json();
 
@@ -23,7 +23,7 @@ async function drawFromJson(jsonFile, nombre = "Kevin") { // nombre por defecto
   const centerY = (minY + maxY) / 2;
 
   let index = 0;
-  const chunkSize = 5; // dibuja 5 regiones por frame
+  const chunkSize = 5; // regiones por frame
   const delay = 1500; // ms de retraso entre frames
 
   function drawNextChunk() {
@@ -49,18 +49,35 @@ async function drawFromJson(jsonFile, nombre = "Kevin") { // nombre por defecto
     if (index < regions.length) {
       setTimeout(() => requestAnimationFrame(drawNextChunk), delay);
     } else {
-      // Cuando termina el dibujo, mostrar el nombre debajo
-      ctx.fillStyle = "white";
-      ctx.font = "30px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(nombre, canvas.width / 2, canvas.height - 20);
+      // Cuando termina el dibujo, iniciar animación de letras
+      drawNombreAnimado(nombre);
     }
   }
 
   drawNextChunk();
+
+  // Función para mostrar el nombre letra por letra
+  function drawNombreAnimado(nombre) {
+    let letraIndex = 0;
+    const letraDelay = 300; // ms entre cada letra
+    const nombreArr = nombre.split("");
+    
+    function dibujarLetra() {
+      if (letraIndex <= nombreArr.length) {
+        ctx.fillStyle = "white";
+        ctx.font = "italic 30px Arial"; // letra cursiva
+        ctx.textAlign = "center";
+        // Se dibuja el nombre completo hasta la letra actual
+        ctx.clearRect(0, canvas.height - 60, canvas.width, 40); // limpiar área del nombre
+        ctx.fillText(nombreArr.slice(0, letraIndex).join(""), canvas.width / 2, canvas.height - 40);
+        letraIndex++;
+        setTimeout(dibujarLetra, letraDelay);
+      }
+    }
+
+    dibujarLetra();
+  }
 }
 
 // Llamada a la función
-drawFromJson("sunflowers.json", "Kevin");
-
-
+drawFromJson("sunflowers.json", "PARA: VANELLY");
