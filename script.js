@@ -5,7 +5,7 @@ async function drawFromJson(jsonFile, nombre = "PARA: VANELLY") {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
-  // Calcular límites sin usar spread
+  // Calcular límites
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   regions.forEach(r => {
     r.contour.forEach(([x, y]) => {
@@ -23,8 +23,8 @@ async function drawFromJson(jsonFile, nombre = "PARA: VANELLY") {
   const centerY = (minY + maxY) / 2;
 
   let index = 0;
-  const chunkSize = 5; // regiones por frame
-  const delay = 1500; // ms de retraso entre frames
+  const chunkSize = 5;
+  const delay = 1500;
 
   function drawNextChunk() {
     for (let i = 0; i < chunkSize && index < regions.length; i++, index++) {
@@ -56,20 +56,26 @@ async function drawFromJson(jsonFile, nombre = "PARA: VANELLY") {
 
   drawNextChunk();
 
-  // Función para mostrar el nombre letra por letra
+  // Animación de nombre letra por letra
   function drawNombreAnimado(nombre) {
     let letraIndex = 0;
-    const letraDelay = 300; // ms entre cada letra
+    const letraDelay = 300;
     const nombreArr = nombre.split("");
-    
+
     function dibujarLetra() {
       if (letraIndex <= nombreArr.length) {
         ctx.fillStyle = "white";
-        ctx.font = "italic 30px Lucida Handwriting"; // letra cursiva
+        ctx.font = "italic 30px Lucida Handwriting";
         ctx.textAlign = "center";
-        // Se dibuja el nombre completo hasta la letra actual
-        ctx.clearRect(0, canvas.height - 60, canvas.width, 40); // limpiar área del nombre
-        ctx.fillText(nombreArr.slice(0, letraIndex).join(""), canvas.width / 2, canvas.height - 100);
+
+        // Limpiar la zona del texto antes de dibujar
+        const textY = canvas.height - 100;
+        const textHeight = 40;
+        ctx.clearRect(0, textY - textHeight + 5, canvas.width, textHeight);
+
+        // Dibujar el nombre hasta la letra actual
+        ctx.fillText(nombreArr.slice(0, letraIndex).join(""), canvas.width / 2, textY);
+
         letraIndex++;
         setTimeout(dibujarLetra, letraDelay);
       }
@@ -81,5 +87,7 @@ async function drawFromJson(jsonFile, nombre = "PARA: VANELLY") {
 
 // Llamada a la función
 drawFromJson("sunflowers.json", "PARA: VANELLY");
+
+
 
 
