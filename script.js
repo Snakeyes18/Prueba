@@ -1,4 +1,4 @@
-async function drawFromJson(jsonFile) {
+async function drawFromJson(jsonFile, nombre = "Kevin") { // nombre por defecto
   const response = await fetch(jsonFile);
   const regions = await response.json();
 
@@ -23,8 +23,8 @@ async function drawFromJson(jsonFile) {
   const centerY = (minY + maxY) / 2;
 
   let index = 0;
-  const chunkSize = 5; // dibuja 5 regiones por frame, puedes ajustar para más lento o más rápido
-  const delay = 1500; // retraso en ms entre frames, también ajustable
+  const chunkSize = 5; // dibuja 5 regiones por frame
+  const delay = 1500; // ms de retraso entre frames
 
   function drawNextChunk() {
     for (let i = 0; i < chunkSize && index < regions.length; i++, index++) {
@@ -48,6 +48,12 @@ async function drawFromJson(jsonFile) {
 
     if (index < regions.length) {
       setTimeout(() => requestAnimationFrame(drawNextChunk), delay);
+    } else {
+      // Cuando termina el dibujo, mostrar el nombre debajo
+      ctx.fillStyle = "white";
+      ctx.font = "30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(nombre, canvas.width / 2, canvas.height - 20);
     }
   }
 
@@ -55,6 +61,6 @@ async function drawFromJson(jsonFile) {
 }
 
 // Llamada a la función
-drawFromJson("sunflowers.json");
+drawFromJson("sunflowers.json", "Kevin");
 
 
