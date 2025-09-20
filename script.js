@@ -5,7 +5,7 @@ async function drawFromJson(jsonFile) {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
-  // Calcular límites sin spread
+  // Calcular límites sin usar spread
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   regions.forEach(r => {
     r.contour.forEach(([x, y]) => {
@@ -23,9 +23,10 @@ async function drawFromJson(jsonFile) {
   const centerY = (minY + maxY) / 2;
 
   let index = 0;
+  const chunkSize = 5; // dibuja 5 regiones por frame, puedes ajustar para más lento o más rápido
+  const delay = 50; // retraso en ms entre frames, también ajustable
 
   function drawNextChunk() {
-    const chunkSize = 50; // Dibujar 50 regiones por frame
     for (let i = 0; i < chunkSize && index < regions.length; i++, index++) {
       const region = regions[index];
       const [r, g, b] = region.color;
@@ -46,11 +47,12 @@ async function drawFromJson(jsonFile) {
     }
 
     if (index < regions.length) {
-      requestAnimationFrame(drawNextChunk);
+      setTimeout(() => requestAnimationFrame(drawNextChunk), delay);
     }
   }
 
   drawNextChunk();
 }
 
+// Llamada a la función
 drawFromJson("sunflowers.json");
