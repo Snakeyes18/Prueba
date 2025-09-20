@@ -24,7 +24,7 @@ async function drawFromJson(jsonFile) {
 
   let index = 0;
   const chunkSize = 5; // dibuja 5 regiones por frame, puedes ajustar para más lento o más rápido
-  const delay = 500; // retraso en ms entre frames, también ajustable
+  const delay = 1500; // retraso en ms entre frames, también ajustable
 
   function drawNextChunk() {
     for (let i = 0; i < chunkSize && index < regions.length; i++, index++) {
@@ -56,4 +56,5 @@ async function drawFromJson(jsonFile) {
 
 // Llamada a la función
 drawFromJson("sunflowers.json");
+
 
