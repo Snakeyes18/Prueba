@@ -65,7 +65,7 @@ async function drawFromJson(jsonFile, nombre = "PARA: VANELLY") {
     function dibujarLetra() {
       if (letraIndex <= nombreArr.length) {
         ctx.fillStyle = "white";
-        ctx.font = "italic 30px Lucida Handwriting, cursive"; // letra cursiva
+        ctx.font = "italic 30px Lucida Handwriting"; // letra cursiva
         ctx.textAlign = "center";
         // Se dibuja el nombre completo hasta la letra actual
         ctx.clearRect(0, canvas.height - 60, canvas.width, 40); // limpiar área del nombre
@@ -81,4 +81,5 @@ async function drawFromJson(jsonFile, nombre = "PARA: VANELLY") {
 
 // Llamada a la función
 drawFromJson("sunflowers.json", "PARA: VANELLY");
+
 
