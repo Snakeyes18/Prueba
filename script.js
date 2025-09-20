@@ -5,47 +5,52 @@ async function drawFromJson(jsonFile) {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
-  // Calcular límites
-  const allPoints = regions.flatMap(r => r.contour);
-  const xs = allPoints.map(p => p[0]);
-  const ys = allPoints.map(p => p[1]);
-
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
+  // Calcular límites sin spread
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  regions.forEach(r => {
+    r.contour.forEach(([x, y]) => {
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    });
+  });
 
   const width = maxX - minX;
   const height = maxY - minY;
   const scale = Math.min(600 / width, 600 / height);
-
   const centerX = (minX + maxX) / 2;
   const centerY = (minY + maxY) / 2;
 
-  // Dibujar cada región
-  regions.forEach(region => {
-    const [r, g, b] = region.color;
-    const color = `rgb(${r}, ${g}, ${b})`;
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
+  let index = 0;
 
-    ctx.beginPath();
+  function drawNextChunk() {
+    const chunkSize = 50; // Dibujar 50 regiones por frame
+    for (let i = 0; i < chunkSize && index < regions.length; i++, index++) {
+      const region = regions[index];
+      const [r, g, b] = region.color;
+      const color = `rgb(${r}, ${g}, ${b})`;
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
 
-    region.contour.forEach(([px, py], i) => {
-      const x = (px - centerX) * scale + canvas.width / 2;
-      const y = (centerY - py) * scale + canvas.height / 2;
+      ctx.beginPath();
+      region.contour.forEach(([px, py], i) => {
+        const x = (px - centerX) * scale + canvas.width / 2;
+        const y = (centerY - py) * scale + canvas.height / 2;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
 
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    });
+    if (index < regions.length) {
+      requestAnimationFrame(drawNextChunk);
+    }
+  }
 
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-  });
+  drawNextChunk();
 }
 
 drawFromJson("sunflowers.json");
